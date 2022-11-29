@@ -43,7 +43,7 @@
         <div class="container">
             <br>
         <?php 
-        $data = mysqli_query($koneksi,"SELECT * FROM tb_ptk");
+        $data = mysqli_query($koneksi,"SELECT * FROM tb_ptk where sts_ptk = 1");
         $jumlah_data = mysqli_num_rows($data);?>
             <p>Jumlah Lowongan Yang menunggu di konfirmasi&nbsp;:<b>&nbsp;<?php echo $jumlah_data?></b></p>
             <table class="table table-bordered">
@@ -67,12 +67,13 @@
 				$jumlah_data = mysqli_num_rows($data);
 				$total_halaman = ceil($jumlah_data / $batas);
  
-				$data = mysqli_query($koneksi,"SELECT * from tb_ptk INNER JOIN tb_posisi ON tb_ptk.id_posisi = tb_posisi.id_posisi INNER JOIN tb_user ON tb_ptk.id_user = tb_user.id_user limit $halaman_awal, $batas");
-				$nomor = $halaman_awal+1;
+				$data1 = mysqli_query($koneksi,"SELECT * from tb_ptk INNER JOIN tb_posisi ON tb_ptk.id_posisi = tb_posisi.id_posisi INNER JOIN tb_user ON tb_ptk.id_user = tb_user.id_user WHERE sts_ptk = '1' limit $halaman_awal, $batas");
+				$data2 = mysqli_query($koneksi,"SELECT * from tb_ptk INNER JOIN tb_posisi ON tb_ptk.id_posisi = tb_posisi.id_posisi INNER JOIN tb_user ON tb_ptk.id_user = tb_user.id_user WHERE sts_ptk = '2' limit $halaman_awal, $batas");
+                $data3 = mysqli_query($koneksi,"SELECT * from tb_ptk INNER JOIN tb_posisi ON tb_ptk.id_posisi = tb_posisi.id_posisi INNER JOIN tb_user ON tb_ptk.id_user = tb_user.id_user WHERE sts_ptk = '3' limit $halaman_awal, $batas");
+                $nomor = $halaman_awal+1;
                 while
-                ($d = mysqli_fetch_array($data)){
-					?>
-                        <?php if($d['sts_ptk']== '1') : ?>
+                ($d = mysqli_fetch_array($data1)){
+					?>         
                             <tr>
                             <td>
                             <h4 align="left" style="margin-left:10px" class="nama_lowongan"> <a 
@@ -86,11 +87,16 @@
                                 <h7 style="float:right;margin:20px 10px 0 0;">details</h7>
                             </a>
                         </td>
-                        <?php elseif($d['sts_ptk']=='2') : ?>
-                        <td>
-                            <h4 align="left" style="margin-left:10px" class="nama_lowongan"> <a
-                                    href="details.php?id=<?=$d['id']?>"><?php echo $d['posisi'];?></a>
-                            </h4>
+
+                <?php
+                }
+                while
+                ($d = mysqli_fetch_array($data2)){
+					?> 
+                        <td> 
+                            <h4 align="left" style="margin-left:10px" class="nama_lowongan"> 
+                                <a href="details.php?id=<?=$d['id']?>"><?php echo $d['posisi'];?></a>
+                            </h4> 
                             <h6 align="left" style="margin-left:10px"><?php echo $d['jenis_pekerjaan'];?></h6>
                             <h6 align="left" style="color:red;margin: 0 0 0 10px">
                                 Deadline
@@ -100,7 +106,13 @@
                                 <h7 style="float:right;margin:20px 10px 0 0;">details</h7>
                             </a>
                         </td>
-                        <?php else : ?>
+  
+                <?php
+                }
+                while
+                ($d = mysqli_fetch_array($data3)){
+					?> 
+                        
                             <td>
                             <h4 align="left" style="margin-left:10px" class="nama_lowongan"> <a
                                     href="details.php?id=<?=$d['id']?>"><?php echo $d['posisi'];?></a>
@@ -112,7 +124,7 @@
                             </a>
                         </td>  
                         </tr>
-                        <?php endif; ?>
+                        
                     <?php
 				}
 				?>
@@ -147,7 +159,7 @@
                         <!--Grid column-->
                         <div class="col-md-3 col-lg-6 col-xl-2 mx-auto mb-4">
                             <!-- Links -->
-                            <img src="../asset/img/logo.png" class="logo" style="padding-right:35px">
+                            <img src="../asset/img/logo.png"    class="logo" style="padding-right:35px">
                             <hr class="mb-3 mt-0 d-inline-block mx-auto"
                                 style="width: 160px;background-color: #7c4dff; height: 2px" />
                             <i class="bi bi-geo-alt">
